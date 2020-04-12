@@ -7,24 +7,9 @@ const FeedbackButton = ({text, feedbackHandler}) => {
   )
 }
 
-const Statistics = (props) => {
-  if(!props.total) {
-    return <p>No feedback given</p>
-  }
-  
- return (
-  <>
-    <h1>Statistics</h1>
-    <p>good {props.good}</p>
-    <p>neutral {props.neutral}</p>
-    <p>bad  {props.bad}</p>
-    <p>all {props.total}</p>
-    <p>average {props.average}</p>
-    <p>positive {props.positive}%</p>
-  </>
-  )
+const Statistic = ({text, value}) => {
+  return <p>{text} {value}{text === "positive" ? "%" : ""}</p>
 }
-
 const App = () => {
   // save clicks of each button to own state
   const [good, setGood] = useState(0)
@@ -40,14 +25,31 @@ const App = () => {
       <FeedbackButton text={"good"} feedbackHandler={() => setGood(good + 1)} />
       <FeedbackButton text={"neutral"} feedbackHandler={() => setNeutral(neutral + 1)} />
       <FeedbackButton text={"bad"} feedbackHandler={() => setBad(bad + 1)} />
-      <Statistics
-        good={good}
-        neutral={neutral}
-        bad={bad}
-        total={getTotal()}
-        average={getTotal() ? (good - bad)/getTotal() : 0}
-        positive={getTotal() ? good * 100/getTotal() : 0}
-       />
+      <h1>Statistics</h1>
+      <Statistic
+        value={good}
+        text={"good"}
+      />
+      <Statistic
+        value={neutral}
+        text={"neutral"}
+      />
+      <Statistic
+        value={bad}
+        text={"bad"}
+      />
+      <Statistic
+        value={getTotal()}
+        text={"all"}
+      />
+      <Statistic
+        value={getTotal() ? (good - bad)/getTotal() : 0}
+        text={"average"}
+      />
+      <Statistic
+        value={getTotal() ? good * 100/getTotal() : 0}
+        text={"positive"}
+      />
       
     </div>
   )
