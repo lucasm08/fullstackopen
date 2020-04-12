@@ -7,9 +7,6 @@ const FeedbackButton = ({text, feedbackHandler}) => {
   )
 }
 
-const Statistic = ({text, value}) => {
-  return <p>{text} {value}{text === "positive" ? "%" : ""}</p>
-}
 const App = () => {
   // save clicks of each button to own state
   const [good, setGood] = useState(0)
@@ -26,30 +23,35 @@ const App = () => {
       <FeedbackButton text={"neutral"} feedbackHandler={() => setNeutral(neutral + 1)} />
       <FeedbackButton text={"bad"} feedbackHandler={() => setBad(bad + 1)} />
       <h1>Statistics</h1>
-      <Statistic
-        value={good}
-        text={"good"}
-      />
-      <Statistic
-        value={neutral}
-        text={"neutral"}
-      />
-      <Statistic
-        value={bad}
-        text={"bad"}
-      />
-      <Statistic
-        value={getTotal()}
-        text={"all"}
-      />
-      <Statistic
-        value={getTotal() ? (good - bad)/getTotal() : 0}
-        text={"average"}
-      />
-      <Statistic
-        value={getTotal() ? good * 100/getTotal() : 0}
-        text={"positive"}
-      />
+      <table>
+      <tbody>
+        <tr>
+            <td>good</td>
+            <td>{good}</td>
+          </tr>
+          <tr>
+            <td>neutral</td>
+            <td>{neutral}</td>
+          </tr>
+          <tr>
+            <td>bad</td>
+            <td>{bad}</td>
+          </tr>
+          <tr>
+            <td>all</td>
+            <td>{getTotal()}</td>
+          </tr>
+          <tr>
+            <td>average</td>
+            <td>{getTotal() ? (good - bad)/getTotal() : 0}</td>
+          </tr>
+          <tr>
+            <td>positive</td>
+            <td>{getTotal() ? good * 100/getTotal() : 0}%</td>
+          </tr>
+      </tbody>
+       
+      </table>
       
     </div>
   )
