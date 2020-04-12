@@ -1,14 +1,24 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
+import { isUserWhitespacable } from '@babel/types'
 
 const App = (props) => {
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState({0:0, 1:0, 2:0, 3:0, 4:0, 5:0})
 
+  const handleVotesUpdate = () => {
+    const copy = {...votes}
+    copy[selected] += 1
+    setVotes(copy)
+  }
 
   return (
     <div>
       {props.anecdotes[selected]}
+      <p>has {votes[selected]} votes</p>
+  
       <div>
+        <button onClick={handleVotesUpdate}>vote</button>
         <button onClick={() => setSelected(Math.floor((Math.random() * 6) + 1) - 1)}>next anecdote</button>
       </div>
     </div>
