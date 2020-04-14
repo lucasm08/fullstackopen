@@ -12,6 +12,13 @@ const App = () => {
 
   const handleAddNewName = (event) => {
     event.preventDefault()
+    const exist = persons.find(person => {
+      return person.name.toLocaleLowerCase() === newName.toLocaleLowerCase()
+    })
+    if(exist) {
+      alert(`${newName} is already added to phonebook`)
+      return;
+    }
      const newNameObj =  {
        name: newName
      }
