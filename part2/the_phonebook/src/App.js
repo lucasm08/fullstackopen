@@ -1,30 +1,37 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import Filter from './Filter';
-import PersonForm from './PersonForm';
-import Persons from './Persons';
+import personService from './services/persons'
+import Filter from './components/Filter';
+import PersonForm from './components/PersonForm';
+import Persons from './components/Persons';
 
 const App = () => {
   const [persons, setPersons] = useState([])
-
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ search, setSearch] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-    .then(response => {
-        setPersons(response.data)
-    })
-
+    personService.getAll()
+    .then(persons =>
+        setPersons(persons)
+    )
   }, [])
 
   let filterResult = search.length
-    ? persons.filter(person => (person.name.toLowerCase().includes(search.toLowerCase()))) : persons
+    ? persons.filter(
+        person => (
+          person.name.toLowerCase().includes(search.toLowerCase())
+        )
+      ) 
+    : persons
   
   const handlFilter = (event) => {
     setSearch(event.target.value)
-    filterResult = persons.filter(person => (person.name.toLowerCase().includes(search.toLowerCase())))
+    filterResult = persons.filter(
+      person => (
+        person.name.toLowerCase().includes(search.toLowerCase())
+        )
+      )
   }
 
 
@@ -41,12 +48,18 @@ const App = () => {
        name: newName,
        number: newNumber
      }
-     setPersons(persons.concat(newNameObj))
-     setNewName('')
-     setNewNumber('')
-     if(newNameObj.name.toLowerCase().includes(search.toLowerCase())){
-       filterResult.push(newNameObj)
-     }
+
+     personService.newPerson(newNameObj)
+     .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+        if(returnedPerson.name.toLowerCase().includes(search.toLowerCase())){
+          filterResult.push(returnedPerson)
+        }
+
+     })
+     
   }
 
   return (
@@ -55,12 +68,12 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter handlFilter={handlFilter} search={search} />
       <h2>Add new</h2>
-     <PersonForm
-      newName={newName}
-      newNumber={newNumber}
-      setNewName={setNewName}
-      setNewNumber={setNewNumber}
-      handleAddNewName={handleAddNewName}
+      <PersonForm
+        newName={newName}
+        newNumber={newNumber}
+        setNewName={setNewName}
+        setNewNumber={setNewNumber}
+        handleAddNewName={handleAddNewName}
       />
       <h2>Numbers</h2>
       <Persons persons={filterResult} />
