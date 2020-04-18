@@ -54,14 +54,27 @@ const App = () => {
     const exist = persons.find(person => {
       return person.name.toLocaleLowerCase() === newName.toLocaleLowerCase()
     })
+
+    const newNameObj =  {
+      name: newName,
+      number: newNumber
+    }
+
     if(exist) {
-      alert(`${newName} is already added to phonebook`)
+      if(
+        window.confirm(
+          `${newName} is already added to the phonebook, replace the old number with a new one?`
+        )
+      ) {
+        personService.updatePerson(newNameObj, exist.id)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => {
+            return person.id === returnedPerson.id ? returnedPerson : person
+          }))
+        })
+      }
       return;
     }
-     const newNameObj =  {
-       name: newName,
-       number: newNumber
-     }
 
      personService.newPerson(newNameObj)
      .then(returnedPerson => {
