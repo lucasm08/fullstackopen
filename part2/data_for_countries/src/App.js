@@ -6,6 +6,7 @@ import './App.css';
 function App() {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
+  const [displayCountry, setDisplayCountry] = useState(false)
  // const [result, setResult] = useState([])
 
  let filterResult = search.length
@@ -20,15 +21,16 @@ function App() {
 
   const handleCountriesSearch = (e) => {
     setSearch(e.target.value);
+    setDisplayCountry(false)
   } 
   return (
     <div>
-      <div>
+      <div style={{marginBottom: "10px"}}>
       find countries: <input onChange={handleCountriesSearch} value={search} />
       </div>
       {
         filterResult.length < 11 ? 
-        <Countries countries={filterResult}/> : 
+        <Countries countries={filterResult} setDisplayCountry={setDisplayCountry} displayContry={displayCountry}/> : 
         "Too many matches, specify another filter" 
       }
     </div>

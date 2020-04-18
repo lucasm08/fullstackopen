@@ -1,14 +1,35 @@
-import React from 'react';
-import Country from './Country';
+import React, { useState } from 'react';
+import CountryPage from './CountryPage';
+//import Country from './Country'
 
-const Countries = ({countries}) => {
+const Countries = ({countries, displayContry, setDisplayCountry}) => {
+    const [selected, setSelected] = useState({})
+
+    const handleDisplay = (country) => {
+        setDisplayCountry(true)
+        setSelected(country)
+
+        
+    }
+
+    
     return ( 
         <div>
             {
-                countries.length === 1
-                ? <Country country={countries[0]} />
+                displayContry && selected
+                ? <CountryPage country={selected} />
+                : ""
+            }
+            {
+                displayContry
+                ? ""
+                : countries.length === 1
+                ? <CountryPage country={countries[0]} />
                 : countries.map(country => {
-                    return (<p key={+country.numericCode}>{country.name}</p>)
+                    return (
+                        <div key={+country.numericCode}>
+                            {country.name} <button onClick={() => {handleDisplay(country)} }>show</button>
+                        </div>)
                 })
                 
                
