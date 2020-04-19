@@ -1,16 +1,6 @@
 {
   "persons": [
     {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
@@ -19,6 +9,11 @@
       "name": "Lucas Gompou",
       "number": "1-334-343-3545",
       "id": 5
+    },
+    {
+      "name": "Deftones",
+      "number": "1-234-234-2343",
+      "id": 6
     }
   ]
 }

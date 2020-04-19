@@ -3,12 +3,17 @@ import personService from './services/persons'
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ search, setSearch] = useState('')
+  const [ notification, setNotification]  = useState({
+    message: null,
+    type: null
+  })
 
   useEffect(() => {
     personService.getAll()
@@ -39,13 +44,32 @@ const App = () => {
         personService.deletePerson(person.id)
         .then(data => {
             setPersons(persons.filter(p => p.id !== person.id))
+            notify({
+              message: `deleted ${person.name} successfully!`,
+              type: 'success'
+            })
         })
         .catch(error => {
-            alert(
-              `${person.name} was already deleted from server`
-            )
+          notify({
+            message: `${person.name} was already deleted from server`,
+            type: 'error'
+          })
         })
     }
+  }
+
+  const notify = (notification) => {
+    setNotification({
+      message: notification.message,
+      type: notification.type
+    })
+
+    setTimeout(() => {
+      setNotification({
+        message: null,
+        type: null,
+      })
+    }, 5000)
   }
 
 
@@ -71,6 +95,10 @@ const App = () => {
           setPersons(persons.map(person => {
             return person.id === returnedPerson.id ? returnedPerson : person
           }))
+          notify({
+            message: `Updadated ${returnedPerson.name}'s phone number successfully!`,
+            type: 'success'
+          })
         })
       }
       return;
@@ -81,6 +109,10 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        notify({
+          message: `Added ${returnedPerson.name} successfully!`,
+          type: 'success'
+        })
         if(returnedPerson.name.toLowerCase().includes(search.toLowerCase())){
           filterResult.push(returnedPerson)
         }
@@ -93,6 +125,7 @@ const App = () => {
     <div>
       <div>debug: {newName}</div>
       <h2>Phonebook</h2>
+      <Notification notification={notification} />
       <Filter handlFilter={handlFilter} search={search} />
       <h2>Add new</h2>
       <PersonForm
