@@ -5,7 +5,6 @@ app.use(express.json())
 
 
 const persons =  [
-
     {
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
@@ -33,6 +32,18 @@ app.get('/api/info', (req, res) => {
         
         <p>${new Date()}</p>
     `)
+})
+
+app.get('/api/persons/:id', (req, res) => {
+    const id = +req.params.id
+    const person = persons.find(person => person.id === id)
+
+    if(!person) {
+        return res.status(400).json({
+          error: 'Person not found'
+        })
+    }
+    res.json(person)
 })
 
 
