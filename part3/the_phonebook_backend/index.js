@@ -63,6 +63,15 @@ app.post('/api/persons', (req, res) => {
         error: 'name or number missing'
       })
     }
+
+    const existingPerson = persons.find(
+        person => person.name.toLowerCase() === req.body.name.toLowerCase()
+    )
+    if(existingPerson) {
+        return res.status(400).json({
+            error: `name must be unique`
+        })
+    }
   
     const person = {
       name: req.body.name,
