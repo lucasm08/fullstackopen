@@ -91,25 +91,23 @@ app.post('/api/persons', (req, res) => {
       })
     }
 
-    const existingPerson = persons.find(
-        person => person.name.toLowerCase() === req.body.name.toLowerCase()
-    )
-    if(existingPerson) {
-        return res.status(400).json({
-            error: `name must be unique`
-        })
-    }
-  
-    const person = {
+    // const existingPerson = persons.find(
+    //     person => person.name.toLowerCase() === req.body.name.toLowerCase()
+    // )
+    // if(existingPerson) {
+    //     return res.status(400).json({
+    //         error: `name must be unique`
+    //     })
+    // }
+
+    const person = new Person({
       name: req.body.name,
-      number: req.body.number,
-      date: new Date(),
-      id: generateId(),
-    }
+      number: req.body.number
+    })
   
-    persons = persons.concat(person)
-  
-    res.json(person)
+    person.save().then(savedPerson => {
+      res.json(savedPerson)
+    })
 })
 
 
