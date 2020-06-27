@@ -118,6 +118,12 @@ const App = () => {
         }
 
      })
+     .catch(error => {
+        notify({
+          message: error.response.data.error,
+          type: 'error'
+        })
+     })
      
   }
 
