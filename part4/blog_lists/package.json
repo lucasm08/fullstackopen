@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest --verbose"
   },
   "author": "",
   "license": "ISC",
@@ -20,7 +20,11 @@
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-node": "^11.1.0",
+    "jest": "^26.1.0",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
