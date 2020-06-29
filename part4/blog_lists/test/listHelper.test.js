@@ -26,6 +26,14 @@ const blogs = [
     likes: 12,
     __v: 0,
   },
+  {
+    _id: '5a422b3a1b54a676234d17f9',
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+    likes: 12,
+    __v: 0,
+  },
 ];
 
 const listWithOneBlog = [
@@ -59,7 +67,7 @@ describe('total likes', () => {
 
   test('of a bigger list is calculated right', () => {
     const result = listHelper.totalLikes(blogs);
-    expect(result).toBe(24);
+    expect(result).toBe(36);
   });
 });
 
@@ -85,6 +93,54 @@ describe('the favorite blog', () => {
       likes: 12,
     };
     const result = listHelper.favoriteBlog(blogs);
+    expect(result).toEqual(match);
+  });
+});
+
+describe('the author with most blogs', () => {
+  test('for a blog list with no entry should be an empty object', () => {
+    expect(listHelper.mostBlogs([])).toEqual({});
+  });
+
+  test('for a blog list with one entry should be that author', () => {
+    const match = {
+      author: 'Edsger W. Dijkstra',
+      blogs: 1,
+    };
+    const result = listHelper.mostBlogs(listWithOneBlog);
+    expect(result).toEqual(match);
+  });
+
+  test('for a blog list with many entries should the right one', () => {
+    const match = {
+      author: 'Edsger W. Dijkstra',
+      blogs: 3,
+    };
+    const result = listHelper.mostBlogs(blogs);
+    expect(result).toEqual(match);
+  });
+});
+
+describe('the author with the most likes', () => {
+  test('for a blog list with no entry should be an empty object', () => {
+    expect(listHelper.mostLikes([])).toEqual({});
+  });
+
+  test('for a blog list with one entry should be that author', () => {
+    const match = {
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
+    };
+    const result = listHelper.mostLikes(listWithOneBlog);
+    expect(result).toEqual(match);
+  });
+
+  test('for a blog list with many entries should the right one', () => {
+    const match = {
+      author: 'Edsger W. Dijkstra',
+      likes: 29,
+    };
+    const result = listHelper.mostLikes(blogs);
     expect(result).toEqual(match);
   });
 });
