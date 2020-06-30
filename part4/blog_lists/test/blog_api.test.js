@@ -88,6 +88,18 @@ test('default the likes property to 0 if missing', async () => {
   expect(likes).toContain(0);
 });
 
+test('the title and url are required', async () => {
+  const newBlog = {
+    author: 'Aga Zaboklicka',
+    likes: 7,
+  };
+
+  await api.post('/api/blogs').send(newBlog).expect(400);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
