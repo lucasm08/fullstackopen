@@ -36,6 +36,58 @@ test('the first blog title is React patterns', async () => {
   expect(titles).toContain('React patterns');
 });
 
+test('a blog post has a unique identifier property named id', async () => {
+  const response = await api.get('/api/blogs');
+
+  const blog = response.body[0];
+
+  expect(blog.id).toBeDefined();
+});
+
+test('a valid blog entry can be added', async () => {
+  const newBlog = {
+    title: 'Are you (programming) in your comfort zone? Please don’t.',
+    author: 'Aga Zaboklicka',
+    url:
+      'https://dev.to/agazaboklicka/are-you-programming-in-your-comfort-zone-please-dont-69i',
+    likes: 7,
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+
+  const titles = blogsAtEnd.map((b) => b.title);
+  expect(titles).toContain(
+    'Are you (programming) in your comfort zone? Please don’t.'
+  );
+});
+
+test('default the likes property to 0 if missing', async () => {
+  const newBlog = {
+    title: 'Are you (programming) in your comfort zone? Please don’t.',
+    author: 'Aga Zaboklicka',
+    url:
+      'https://dev.to/agazaboklicka/are-you-programming-in-your-comfort-zone-please-dont-69i',
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  const likes = blogsAtEnd.map((b) => b.likes);
+
+  expect(likes).toContain(0);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
