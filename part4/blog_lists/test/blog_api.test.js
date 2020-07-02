@@ -4,6 +4,7 @@ const supertest = require('supertest');
 const helper = require('./test_helper');
 const app = require('../app');
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 const api = supertest(app);
 
@@ -139,6 +140,49 @@ describe('updating a specific blog', () => {
     const likes = blogsAtEnd.map((b) => b.likes);
 
     expect(likes).toContain(100);
+  });
+});
+
+describe('creation of a user', () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const userObjects = helper.users.map((user) => new User(user));
+    const promiseArray = userObjects.map((user) => user.save());
+    await Promise.all(promiseArray);
+  });
+
+  test('fails with statuscode 400 if the user is invalid', async () => {
+    const newUser = {
+      name: 'Lucas',
+      password: 'qwerty',
+    };
+
+    await api.post('/api/users').send(newUser).expect(400);
+  });
+
+  test('fails with statuscode 400 and specific error message if invalid passord', async () => {
+    const newUser = {
+      username: 'lafi',
+      name: 'Lucas',
+      password: 'qw',
+    };
+
+    const response = await api.post('/api/users').send(newUser).expect(400);
+
+    expect(response.body.error).toBe(
+      'the password must be at least 3 characters'
+    );
+  });
+
+  test('fails with status code 400 if the user already exist', async () => {
+    const newUser = {
+      username: 'davie504',
+      name: 'David',
+      password: '1234567',
+    };
+
+    await api.post('/api/users').send(newUser).expect(400);
   });
 });
 
