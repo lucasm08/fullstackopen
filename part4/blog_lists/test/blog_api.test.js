@@ -8,10 +8,38 @@ const User = require('../models/user');
 
 const api = supertest(app);
 
+let token;
+let userId;
+
+beforeAll(async () => {
+  await User.deleteMany({});
+
+  const user = {
+    username: 'davie504',
+    name: 'David',
+    password: '1234567',
+  };
+  let res = await api.post('/api/users').send(user);
+  userId = res.body.id;
+  res = await api.post('/api/login').send({
+    username: user.username,
+    password: user.password,
+  });
+
+  token = res.body.token;
+});
+
 beforeEach(async () => {
   await Blog.deleteMany({});
 
-  const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
+  const blogObjects = helper.initialBlogs.map(
+    (blog) =>
+      new Blog({
+        // eslint-disable-next-line node/no-unsupported-features/es-syntax
+        ...blog,
+        user: userId,
+      })
+  );
   const promiseArray = blogObjects.map((blog) => blog.save());
   await Promise.all(promiseArray);
 });
@@ -20,26 +48,33 @@ describe('when there is initially some blog entries saved', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
+      .set('authorization', `Bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/);
   });
 
   test('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs');
+    const response = await api
+      .get('/api/blogs')
+      .set('authorization', `Bearer ${token}`);
 
     expect(response.body).toHaveLength(helper.initialBlogs.length);
   });
 
   test('a specific blog should be returned', async () => {
-    const response = await api.get('/api/blogs');
+    const response = await api
+      .get('/api/blogs')
+      .set('authorization', `Bearer ${token}`);
 
     const titles = response.body.map((r) => r.title);
 
     expect(titles).toContain('React patterns');
   });
 
-  test('a blog blog has a unique identifier property named id', async () => {
-    const response = await api.get('/api/blogs');
+  test('a blog has a unique identifier property named id', async () => {
+    const response = await api
+      .get('/api/blogs')
+      .set('authorization', `Bearer ${token}`);
 
     const blog = response.body[0];
 
@@ -59,6 +94,7 @@ describe('addition of a new blog entry', () => {
 
     await api
       .post('/api/blogs')
+      .set('authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -82,6 +118,7 @@ describe('addition of a new blog entry', () => {
 
     await api
       .post('/api/blogs')
+      .set('authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -98,10 +135,25 @@ describe('addition of a new blog entry', () => {
       likes: 7,
     };
 
-    await api.post('/api/blogs').send(newBlog).expect(400);
+    await api
+      .post('/api/blogs')
+      .set('authorization', `Bearer ${token}`)
+      .send(newBlog)
+      .expect(400);
 
     const blogsAtEnd = await helper.blogsInDb();
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+  });
+
+  test('fails withstatus code 401 Unauthorized if token is not provided', async () => {
+    const newBlog = {
+      title: 'Are you (programming) in your comfort zone? Please don’t.',
+      author: 'Aga Zaboklicka',
+      url:
+        'https://dev.to/agazaboklicka/are-you-programming-in-your-comfort-zone-please-dont-69i',
+    };
+
+    await api.post('/api/blogs').send(newBlog).expect(401);
   });
 });
 
@@ -110,7 +162,10 @@ describe('deletion of a note', () => {
     const blogsAtStart = await helper.blogsInDb();
     const blogToDelete = blogsAtStart[0];
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('authorization', `Bearer ${token}`)
+      .expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
 
@@ -134,7 +189,11 @@ describe('updating a specific blog', () => {
       likes: 100,
     };
 
-    await api.put(`/api/blogs/${blogToUpdate.id}`).send(blog).expect(200);
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('authorization', `Bearer ${token}`)
+      .send(blog)
+      .expect(200);
 
     const blogsAtEnd = await helper.blogsInDb();
     const likes = blogsAtEnd.map((b) => b.likes);
@@ -144,14 +203,6 @@ describe('updating a specific blog', () => {
 });
 
 describe('creation of a user', () => {
-  beforeEach(async () => {
-    await User.deleteMany({});
-
-    const userObjects = helper.users.map((user) => new User(user));
-    const promiseArray = userObjects.map((user) => user.save());
-    await Promise.all(promiseArray);
-  });
-
   test('fails with statuscode 400 if the user is invalid', async () => {
     const newUser = {
       name: 'Lucas',
