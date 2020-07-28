@@ -6,6 +6,9 @@ import loginService from "./services/login";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [newBlogTitle, setNewBlogTitle] = useState("");
+  const [newBlogAuthor, setNewBlogAuthor] = useState("");
+  const [newBlogUrl, setNewBlogUrl] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -49,6 +52,52 @@ const App = () => {
       <button type="submit">login</button>
     </form>
   );
+
+  const blogForm = () => (
+    <form onSubmit={addBlog}>
+      <label htmlFor="">
+        title:
+        <input
+          value={newBlogTitle}
+          onChange={({ target }) => setNewBlogTitle(target.value)}
+        />
+      </label>{" "}
+      <br />
+      <label htmlFor="">
+        author:
+        <input
+          value={newBlogAuthor}
+          onChange={({ target }) => setNewBlogAuthor(target.value)}
+        />
+      </label>
+      <br />
+      <label htmlFor="">
+        url:
+        <input
+          value={newBlogUrl}
+          onChange={({ target }) => setNewBlogUrl(target.value)}
+        />
+      </label>
+      <br />
+      <button type="submit">create</button>
+    </form>
+  );
+
+  const addBlog = async (event) => {
+    event.preventDefault();
+    const blogObject = {
+      title: newBlogTitle,
+      author: newBlogAuthor,
+      url: newBlogUrl,
+    };
+
+    const createdBlog = await blogService.create(blogObject);
+    console.log(createdBlog);
+    setBlogs(blogs.concat(createdBlog));
+    setNewBlogTitle("");
+    setNewBlogAuthor("");
+    setNewBlogUrl("");
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -94,6 +143,12 @@ const App = () => {
               logout
             </button>
           </p>
+
+          <br />
+          <h2>Create New</h2>
+          {blogForm()}
+          <br />
+          <br />
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
