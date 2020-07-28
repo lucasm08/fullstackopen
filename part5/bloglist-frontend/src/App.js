@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
+import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -31,6 +32,7 @@ const App = () => {
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log in to application</h2>
+      <Notification message={errorMessage} />
       <div>
         username
         <input
@@ -85,18 +87,31 @@ const App = () => {
 
   const addBlog = async (event) => {
     event.preventDefault();
-    const blogObject = {
-      title: newBlogTitle,
-      author: newBlogAuthor,
-      url: newBlogUrl,
-    };
+    try {
+      const blogObject = {
+        title: newBlogTitle,
+        author: newBlogAuthor,
+        url: newBlogUrl,
+      };
 
-    const createdBlog = await blogService.create(blogObject);
-    console.log(createdBlog);
-    setBlogs(blogs.concat(createdBlog));
-    setNewBlogTitle("");
-    setNewBlogAuthor("");
-    setNewBlogUrl("");
+      const createdBlog = await blogService.create(blogObject);
+      console.log(createdBlog);
+      setBlogs(blogs.concat(createdBlog));
+      setNewBlogTitle("");
+      setNewBlogAuthor("");
+      setNewBlogUrl("");
+      setErrorMessage(
+        `a new blog ${createdBlog.title}! by ${createdBlog.author}`
+      );
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    } catch (exception) {
+      setErrorMessage(`Something Unexpected Happened.`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
   };
 
   const handleLogin = async (event) => {
@@ -133,6 +148,7 @@ const App = () => {
       ) : (
         <div>
           <h2>Blogs</h2>
+          <Notification message={errorMessage} />
           <p>
             {user.name} logged-in{" "}
             <button
