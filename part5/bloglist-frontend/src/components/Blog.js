@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLikes }) => {
   const [visible, setVisible] = useState(false);
 
   const show = { display: visible ? "" : "none" };
@@ -17,6 +17,19 @@ const Blog = ({ blog }) => {
     setVisible(!visible);
   };
 
+  const incLikes = () => {
+    handleLikes(
+      {
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: ++blog.likes,
+        user: blog.user.id,
+      },
+      blog.id
+    );
+  };
+
   return (
     <div style={blogStyle}>
       <span>
@@ -25,7 +38,7 @@ const Blog = ({ blog }) => {
       <div className="details" style={show}>
         <span>{blog.url}</span> <br />
         <span>
-          {blog.likes} <button>like</button>
+          {blog.likes} <button onClick={incLikes}>like</button>
         </span>{" "}
         <br />
         <span>{blog.author}</span>

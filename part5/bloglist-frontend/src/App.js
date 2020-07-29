@@ -73,6 +73,22 @@ const App = () => {
     }
   };
 
+  const handleLikes = async (blogObject, blogId) => {
+    try {
+      const updated = await blogService.update(blogObject, blogId);
+      setBlogs(
+        blogs.map((blog) => {
+          return blog.id === updated.id ? updated : blog;
+        })
+      );
+    } catch (exception) {
+      setErrorMessage(`Something Unexpected Happened.`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -124,7 +140,7 @@ const App = () => {
           <br />
           <br />
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} handleLikes={handleLikes} />
           ))}
         </div>
       )}
