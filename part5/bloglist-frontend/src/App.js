@@ -92,6 +92,20 @@ const App = () => {
     }
   };
 
+  const hanbleDeleteBlog = async (blog) => {
+    try {
+      if (window.confirm(`Delete ${blog.title}?`)) {
+        await blogService.remove(blog.id);
+        setBlogs(blogs.filter((b) => b.id !== blog.id));
+      }
+    } catch (exception) {
+      setErrorMessage(`Something Unexpected Happened.`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -143,7 +157,12 @@ const App = () => {
           <br />
           <br />
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} handleLikes={handleLikes} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleLikes={handleLikes}
+              handleDeleteBlog={hanbleDeleteBlog}
+            />
           ))}
         </div>
       )}
