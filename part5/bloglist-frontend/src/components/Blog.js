@@ -1,25 +1,26 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, handleLikes, handleDeleteBlog }) => {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
 
-  const show = { display: visible ? "" : "none" };
-  const label = visible ? "hide" : "show";
+  const show = { display: visible ? '' : 'none' }
+  const label = visible ? 'hide' : 'show'
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: "solid",
+    border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  };
+  }
 
   const toggleVisibility = () => {
-    setVisible(!visible);
-  };
+    setVisible(!visible)
+  }
 
   const deleteBlog = () => {
-    handleDeleteBlog(blog);
-  };
+    handleDeleteBlog(blog)
+  }
 
   const incLikes = () => {
     handleLikes(
@@ -31,8 +32,8 @@ const Blog = ({ blog, handleLikes, handleDeleteBlog }) => {
         user: blog.user.id,
       },
       blog.id
-    );
-  };
+    )
+  }
 
   return (
     <div style={blogStyle}>
@@ -43,13 +44,19 @@ const Blog = ({ blog, handleLikes, handleDeleteBlog }) => {
         <span>{blog.url}</span> <br />
         <span>
           {blog.likes} <button onClick={incLikes}>like</button>
-        </span>{" "}
+        </span>{' '}
         <br />
         <span>{blog.author}</span> <br />
         <button onClick={deleteBlog}>remove</button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Blog;
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  handleLikes: PropTypes.func.isRequired,
+  handleDeleteBlog: PropTypes.func.isRequired,
+}
+
+export default Blog
