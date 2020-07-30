@@ -5,6 +5,7 @@ import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import lodash from "lodash";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -25,7 +26,9 @@ const App = () => {
 
   useEffect(() => {
     if (user) {
-      blogService.getAll().then((blogs) => setBlogs(blogs));
+      blogService
+        .getAll()
+        .then((blogs) => setBlogs(lodash.sortBy(blogs, ["likes"])));
     }
   }, [user]);
 
