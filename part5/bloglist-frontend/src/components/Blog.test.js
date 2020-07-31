@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
 
 describe('<Blog />', () => {
@@ -39,5 +39,15 @@ describe('<Blog />', () => {
 
     expect(div).toHaveTextContent('React patterns')
     expect(blogDetails).toHaveStyle('display: none')
+  })
+
+  test('after clicking the display button, the url and number of likes are shown', () => {
+    const button = component.getByText('show')
+    fireEvent.click(button)
+
+    const blogDetails = component.container.querySelector('.details')
+    expect(blogDetails).not.toHaveStyle('display: none')
+    expect(blogDetails).toHaveTextContent('https://reactpatterns.com/')
+    expect(blogDetails).toHaveTextContent(11)
   })
 })
