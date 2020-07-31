@@ -36,7 +36,7 @@ const Blog = ({ blog, handleLikes, handleDeleteBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <span>
         {blog.title} <button onClick={toggleVisibility}>{label}</button>
       </span>
