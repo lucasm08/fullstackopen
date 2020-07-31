@@ -50,4 +50,12 @@ describe('<Blog />', () => {
     expect(blogDetails).toHaveTextContent('https://reactpatterns.com/')
     expect(blogDetails).toHaveTextContent(11)
   })
+
+  test('handleLikes is called twice, if the like button is clicked twice', () => {
+    const button = component.getByText('like')
+    fireEvent.click(button)
+    fireEvent.click(button)
+
+    expect(handleLikes.mock.calls).toHaveLength(2)
+  })
 })
