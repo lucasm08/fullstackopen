@@ -8,6 +8,21 @@ Cypress.Commands.add('login', ({ username, password }) => {
   })
 })
 
+Cypress.Commands.add('createBlog', ({ title, author, url }) => {
+  cy.request({
+    url: 'http://localhost:3001/api/blogs',
+    method: 'POST',
+    body: { title, author, url },
+    headers: {
+      Authorization: `bearer ${
+        JSON.parse(localStorage.getItem('loggedBlogappUser')).token
+      }`,
+    },
+  })
+
+  cy.visit('http://localhost:3000')
+})
+
 describe('Blog app', function () {
   beforeEach(function () {
     cy.request('POST', 'http://localhost:3001/api/testing/reset')
@@ -63,6 +78,23 @@ describe('Blog app', function () {
       )
       cy.contains('create').click()
       cy.contains('Server Side Redering')
+    })
+
+    describe.only('a blog exists', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'Server Side Redering',
+          author: 'Brian Holt',
+          url: 'https://btholt.github.io/complete-intro-to-react-v5/ssr',
+        })
+      })
+
+      it('a user can like a blog', function () {
+        cy.contains('Server Side Redering').contains('show').click()
+        cy.get('.details').contains('like').as('likeButton')
+        cy.get('@likeButton').click()
+        cy.get('@likeButton').parent().contains('1')
+      })
     })
   })
 })
