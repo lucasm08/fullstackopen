@@ -48,4 +48,21 @@ describe('Blog app', function () {
         .and('have.css', 'border-style', 'solid')
     })
   })
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'bmsr', password: 'qwerty' })
+    })
+
+    it('A blog can be created', function () {
+      cy.contains('new blog').click()
+      cy.get('#title').type('Server Side Redering')
+      cy.get('#author').type('Brian Holt')
+      cy.get('#url').type(
+        'https://btholt.github.io/complete-intro-to-react-v5/ssr'
+      )
+      cy.contains('create').click()
+      cy.contains('Server Side Redering')
+    })
+  })
 })
