@@ -80,12 +80,17 @@ describe('Blog app', function () {
       cy.contains('Server Side Redering')
     })
 
-    describe.only('a blog exists', function () {
+    describe.only('several blogs exists', function () {
       beforeEach(function () {
         cy.createBlog({
           title: 'Server Side Redering',
           author: 'Brian Holt',
           url: 'https://btholt.github.io/complete-intro-to-react-v5/ssr',
+        })
+        cy.createBlog({
+          title: 'Parcel',
+          author: 'Brian Holt',
+          url: 'https://btholt.github.io/complete-intro-to-react-v5/parcel',
         })
       })
 
@@ -94,6 +99,12 @@ describe('Blog app', function () {
         cy.get('.details').contains('like').as('likeButton')
         cy.get('@likeButton').click()
         cy.get('@likeButton').parent().contains('1')
+      })
+
+      it.only('a user can delete a blog', function () {
+        cy.contains('Server Side Redering').parent().as('blogDiv')
+        cy.get('@blogDiv').contains('show').click()
+        cy.get('@blogDiv').contains('remove').click().should('not.exist')
       })
     })
   })
