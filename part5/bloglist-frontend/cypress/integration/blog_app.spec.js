@@ -8,11 +8,11 @@ Cypress.Commands.add('login', ({ username, password }) => {
   })
 })
 
-Cypress.Commands.add('createBlog', ({ title, author, url }) => {
+Cypress.Commands.add('createBlog', ({ title, author, url, likes }) => {
   cy.request({
     url: 'http://localhost:3001/api/blogs',
     method: 'POST',
-    body: { title, author, url },
+    body: { title, author, url, likes },
     headers: {
       Authorization: `bearer ${
         JSON.parse(localStorage.getItem('loggedBlogappUser')).token
@@ -80,31 +80,48 @@ describe('Blog app', function () {
       cy.contains('Server Side Redering')
     })
 
-    describe.only('several blogs exists', function () {
+    describe('several blogs exists', function () {
       beforeEach(function () {
         cy.createBlog({
           title: 'Server Side Redering',
           author: 'Brian Holt',
           url: 'https://btholt.github.io/complete-intro-to-react-v5/ssr',
+          likes: 0,
         })
         cy.createBlog({
           title: 'Parcel',
           author: 'Brian Holt',
           url: 'https://btholt.github.io/complete-intro-to-react-v5/parcel',
+          likes: 2,
+        })
+        cy.createBlog({
+          title: 'Portals',
+          author: 'Brian Holt',
+          url: 'https://btholt.github.io/complete-intro-to-react-v5/portals',
+          likes: 5,
         })
       })
 
       it('a user can like a blog', function () {
         cy.contains('Server Side Redering').contains('show').click()
-        cy.get('.details').contains('like').as('likeButton')
+        cy.contains('Server Side Redering').parent().as('blogDiv')
+        cy.get('@blogDiv').contains('like').as('likeButton')
         cy.get('@likeButton').click()
         cy.get('@likeButton').parent().contains('1')
       })
 
-      it.only('a user can delete a blog', function () {
+      it('a user can delete a blog', function () {
         cy.contains('Server Side Redering').parent().as('blogDiv')
         cy.get('@blogDiv').contains('show').click()
         cy.get('@blogDiv').contains('remove').click().should('not.exist')
+      })
+
+      it('the blogs are ordered in desc order', function () {
+        cy.get('.likes-value').each(($el, index, $list) => {
+          const isNotSorted =
+            index === 0 || +$el.text() <= +Cypress.$($list[index - 1]).text()
+          expect(isNotSorted).to.be.true
+        })
       })
     })
   })

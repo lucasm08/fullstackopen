@@ -43,7 +43,8 @@ const Blog = ({ blog, handleLikes, handleDeleteBlog }) => {
       <div className="details" style={show}>
         <span>{blog.url}</span> <br />
         <span>
-          {blog.likes} <button onClick={incLikes}>like</button>
+          <span className="likes-value">{blog.likes}</span>{' '}
+          <button onClick={incLikes}>like</button>
         </span>{' '}
         <br />
         <span>{blog.author}</span> <br />

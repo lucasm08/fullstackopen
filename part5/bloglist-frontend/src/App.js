@@ -28,7 +28,7 @@ const App = () => {
     if (user) {
       blogService
         .getAll()
-        .then((blogs) => setBlogs(lodash.sortBy(blogs, ['likes'])))
+        .then((blogs) => setBlogs(lodash.orderBy(blogs, ['likes'], ['desc'])))
     }
   }, [user])
 
