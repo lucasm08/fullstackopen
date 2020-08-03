@@ -26,13 +26,11 @@ const AnnecdoteList = () => {
   });
 
   const handleVote = (anecdote) => {
-    dispatch(voteAnnecdote(anecdote.id));
+    dispatch(
+      voteAnnecdote({ ...anecdote, votes: anecdote.votes + 1 }, anecdote.id)
+    );
     const message = `you voted '${anecdote.content}'`;
-
-    dispatch(notificationChange(message));
-    setTimeout(() => {
-      dispatch(notificationChange(''));
-    }, 5000);
+    dispatch(notificationChange(message, 5));
   };
 
   return (
