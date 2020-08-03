@@ -15,6 +15,16 @@ const Annecdote = ({ annecdote, handleClick }) => {
 };
 
 const AnnecdoteList = () => {
+  const dispatch = useDispatch();
+  const annecdotes = useSelector((state) => {
+    if (state.filter === '') {
+      return state.anecdotes;
+    }
+    return state.anecdotes.filter((anecdote) =>
+      anecdote.content.includes(state.filter)
+    );
+  });
+
   const handleVote = (anecdote) => {
     dispatch(voteAnnecdote(anecdote.id));
     const message = `you voted '${anecdote.content}'`;
@@ -25,8 +35,6 @@ const AnnecdoteList = () => {
     }, 5000);
   };
 
-  const dispatch = useDispatch();
-  const annecdotes = useSelector((state) => state.anecdotes);
   return (
     <div>
       <Notifcation />
